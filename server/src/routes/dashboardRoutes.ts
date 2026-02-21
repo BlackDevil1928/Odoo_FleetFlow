@@ -5,7 +5,7 @@ import { requireAuth, requireRole } from '../middleware/authMiddleware'
 
 const router = Router()
 
-// GET /api/dashboard — manager only
-router.get('/', requireAuth, requireRole('manager'), getDashboard)
+// GET /api/dashboard — all authenticated roles
+router.get('/', requireAuth, getDashboard)
 
 export default router

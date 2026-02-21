@@ -8,6 +8,7 @@ import {
     Receipt,
     BarChart2,
     LineChart,
+    MapPin,
     LogOut,
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
@@ -27,6 +28,7 @@ const navItems: NavItem[] = [
     { label: 'Trip & Expense', icon: <Receipt size={18} />, path: '/expenses' },
     { label: 'Performance', icon: <BarChart2 size={18} />, path: '/drivers' },
     { label: 'Analytics', icon: <LineChart size={18} />, path: '/analytics' },
+    { label: 'Live Tracking', icon: <MapPin size={18} />, path: '/fleet' },
 ]
 
 export const Sidebar: React.FC = () => {

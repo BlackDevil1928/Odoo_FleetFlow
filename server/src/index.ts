@@ -2,6 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
+import http from 'http'
+import { Server as SocketServer } from 'socket.io'
+
 import authRoutes from './routes/authRoutes'
 import dashboardRoutes from './routes/dashboardRoutes'
 import aiInsightsRoutes from './routes/aiInsightsRoutes'
@@ -11,6 +14,9 @@ import maintenanceRoutes from './routes/maintenanceRoutes'
 import expenseRoutes from './routes/expenseRoutes'
 import driverRoutes from './routes/driverRoutes'
 import analyticsRoutes from './routes/analyticsRoutes'
+import trackingRoutes from './routes/trackingRoutes'
+
+import { buildFleetPositions } from './controllers/tracking.controller'
 
 dotenv.config()
 
@@ -18,60 +24,77 @@ const app = express()
 const PORT = process.env.PORT ?? 4000
 
 // ─────────────────────────────────────────────────────────
-// GLOBAL MIDDLEWARE
+// GLOBAL MIDDLEWARE  (unchanged)
 // ─────────────────────────────────────────────────────────
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }))
 app.use(express.json())
 app.use(morgan('dev'))
 
 // ─────────────────────────────────────────────────────────
-// ROUTES
+// ROUTES  (all existing routes unchanged)
 // ─────────────────────────────────────────────────────────
-
-// Health check (public)
 app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', service: 'FleetFlow API', timestamp: new Date().toISOString() })
 })
-
-// Auth routes (register, login, me) — public
 app.use('/api/auth', authRoutes)
-
-// Dashboard — manager only
 app.use('/api/dashboard', dashboardRoutes)
-
-// AI Insights — any authenticated user
 app.use('/api/ai-insights', aiInsightsRoutes)
-
-// Vehicles CRUD
 app.use('/api/vehicles', vehicleRoutes)
-
-// Trips CRUD
 app.use('/api/trips', tripRoutes)
-
-// Maintenance & Service Logs
 app.use('/api/maintenance', maintenanceRoutes)
-
-// Expenses & Fuel Logging
 app.use('/api/expenses', expenseRoutes)
-
-// Drivers & Performance
 app.use('/api/drivers', driverRoutes)
-
-// Operational Analytics
 app.use('/api/analytics', analyticsRoutes)
+app.use('/api/tracking', trackingRoutes)
+
+// ─────────────────────────────────────────────────────────
+// HTTP SERVER + SOCKET.IO
+// Socket.io wraps the same HTTP server — zero impact on REST routes.
+// ─────────────────────────────────────────────────────────
+const httpServer = http.createServer(app)
+
+const io = new SocketServer(httpServer, {
+    cors: {
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+})
+
+io.on('connection', async (socket) => {
+    console.log(`[Socket] client connected: ${socket.id}`)
+
+    // Immediately send the current fleet snapshot to the newly joined client
+    try {
+        const positions = await buildFleetPositions()
+        socket.emit('fleet:positions', positions)
+    } catch (err) {
+        console.error('[Socket] initial snapshot error:', err)
+    }
+
+    socket.on('disconnect', () => {
+        console.log(`[Socket] client disconnected: ${socket.id}`)
+    })
+})
+
+// Broadcast fleet positions to ALL clients every 4 seconds
+setInterval(async () => {
+    if (io.engine.clientsCount === 0) return   // skip if nobody is watching
+    try {
+        const positions = await buildFleetPositions()
+        io.emit('fleet:positions', positions)
+    } catch (err) {
+        console.error('[Socket] broadcast error:', err)
+    }
+}, 4000)
 
 // ─────────────────────────────────────────────────────────
 // START
 // ─────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-    console.log(`🚀 FleetFlow API → http://localhost:${PORT}`)
-    console.log(`   POST /api/auth/register`)
-    console.log(`   POST /api/auth/login`)
-    console.log(`   GET  /api/auth/me`)
-    console.log(`   GET  /api/dashboard`)
-    console.log(`   GET  /api/ai-insights`)
-    console.log(`   GET  /api/vehicles`)
-    console.log(`   POST /api/vehicles`)
+httpServer.listen(PORT, () => {
+    console.log(`🚀 FleetFlow API  → http://localhost:${PORT}`)
+    console.log(`🔌 Socket.io      → ws://localhost:${PORT}`)
+    console.log(`📡 Fleet tracking → GET /api/tracking`)
 })
 
 export default app

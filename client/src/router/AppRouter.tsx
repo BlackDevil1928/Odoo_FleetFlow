@@ -16,6 +16,7 @@ const DriversPage = React.lazy(() => import('@/pages/drivers/DriversPage'))
 const AnalyticsPage = React.lazy(() => import('@/pages/analytics/AnalyticsPage'))
 const MaintenancePage = React.lazy(() => import('@/pages/maintenance/MaintenancePage'))
 const ExpensesPage = React.lazy(() => import('@/pages/expenses/ExpensesPage'))
+const FleetTrackingPage = React.lazy(() => import('@/pages/fleet/FleetTrackingPage'))
 const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'))
 
 const Spinner = () => (
@@ -84,6 +85,14 @@ const router = createBrowserRouter([
         element: (
             <ProtectedRoute allowedRoles={['manager', 'dispatcher', 'safety', 'finance']}>
                 <ExpensesPage />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: '/fleet',
+        element: (
+            <ProtectedRoute allowedRoles={['manager', 'dispatcher', 'safety', 'finance']}>
+                <FleetTrackingPage />
             </ProtectedRoute>
         ),
     },
