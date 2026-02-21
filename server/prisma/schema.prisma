@@ -35,6 +35,12 @@ enum TripStatus {
   CANCELLED
 }
 
+enum DriverDutyStatus {
+  ON_DUTY
+  OFF_DUTY
+  SUSPENDED
+}
+
 // ─────────────────────────────────────────────────────────
 // MODELS
 // ─────────────────────────────────────────────────────────
@@ -53,13 +59,18 @@ model User {
 }
 
 model Driver {
-  id        String   @id @default(uuid())
-  fullName  String
-  phone     String?
-  licenseNo String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  trips     Trip[]
+  id              String          @id @default(uuid())
+  fullName        String
+  phone           String?
+  licenseNo       String?         @unique
+  licenseExpiry   DateTime?
+  dutyStatus      DriverDutyStatus @default(ON_DUTY)
+  violations      Int             @default(0)
+  lateTrips       Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  trips           Trip[]
+  expenses        Expense[]
 
   @@map("drivers")
 }
@@ -79,6 +90,7 @@ model Vehicle {
   updatedAt    DateTime      @updatedAt
   trips        Trip[]
   serviceLogs  ServiceLog[]
+  expenses     Expense[]
 
   @@map("vehicles")
 }
@@ -100,6 +112,7 @@ model Trip {
   completedAt        DateTime?
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
+  expense            Expense?
 
   @@map("trips")
 }
@@ -126,3 +139,23 @@ model ServiceLog {
 
   @@map("service_logs")
 }
+
+model Expense {
+  id          String   @id @default(uuid())
+  tripId      String   @unique
+  trip        Trip     @relation(fields: [tripId], references: [id])
+  driverId    String?
+  driver      Driver?  @relation(fields: [driverId], references: [id])
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  fuelLiters  Float?
+  fuelCost    Float    @default(0)
+  miscExpense Float    @default(0)
+  totalCost   Float    @default(0)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("expenses")
+}
+

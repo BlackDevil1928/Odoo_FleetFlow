@@ -8,6 +8,9 @@ import aiInsightsRoutes from './routes/aiInsightsRoutes'
 import vehicleRoutes from './routes/vehicleRoutes'
 import tripRoutes from './routes/tripRoutes'
 import maintenanceRoutes from './routes/maintenanceRoutes'
+import expenseRoutes from './routes/expenseRoutes'
+import driverRoutes from './routes/driverRoutes'
+import analyticsRoutes from './routes/analyticsRoutes'
 
 dotenv.config()
 
@@ -47,6 +50,15 @@ app.use('/api/trips', tripRoutes)
 
 // Maintenance & Service Logs
 app.use('/api/maintenance', maintenanceRoutes)
+
+// Expenses & Fuel Logging
+app.use('/api/expenses', expenseRoutes)
+
+// Drivers & Performance
+app.use('/api/drivers', driverRoutes)
+
+// Operational Analytics
+app.use('/api/analytics', analyticsRoutes)
 
 // ─────────────────────────────────────────────────────────
 // START
