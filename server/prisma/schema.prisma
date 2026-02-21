@@ -83,20 +83,22 @@ model Vehicle {
 }
 
 model Trip {
-  id          String     @id @default(uuid())
-  tripNumber  Int        @default(autoincrement())
-  status      TripStatus @default(DRAFT)
-  origin      String
-  destination String
-  cargo       String?
-  vehicleId   String?
-  driverId    String?
-  vehicle     Vehicle?   @relation(fields: [vehicleId], references: [id])
-  driver      Driver?    @relation(fields: [driverId], references: [id])
-  startedAt   DateTime?
-  completedAt DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id                 String     @id @default(uuid())
+  tripNumber         Int        @default(autoincrement())
+  status             TripStatus @default(DRAFT)
+  origin             String
+  destination        String
+  cargo              String?
+  cargoWeight        Float?     // kg
+  estimatedFuelCost  Float?     // currency
+  vehicleId          String?
+  driverId           String?
+  vehicle            Vehicle?   @relation(fields: [vehicleId], references: [id])
+  driver             Driver?    @relation(fields: [driverId], references: [id])
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
   @@map("trips")
 }

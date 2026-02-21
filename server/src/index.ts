@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes'
 import dashboardRoutes from './routes/dashboardRoutes'
 import aiInsightsRoutes from './routes/aiInsightsRoutes'
 import vehicleRoutes from './routes/vehicleRoutes'
+import tripRoutes from './routes/tripRoutes'
 
 dotenv.config()
 
@@ -39,6 +40,9 @@ app.use('/api/ai-insights', aiInsightsRoutes)
 
 // Vehicles CRUD
 app.use('/api/vehicles', vehicleRoutes)
+
+// Trips CRUD
+app.use('/api/trips', tripRoutes)
 
 // ─────────────────────────────────────────────────────────
 // START
