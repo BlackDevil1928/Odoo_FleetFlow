@@ -10,6 +10,7 @@ const RegisterPage = React.lazy(() => import('@/pages/auth/RegisterPage'))
 
 // Placeholder pages (to be built page-by-page)
 const DashboardPage = React.lazy(() => import('@/pages/dashboard/DashboardPage'))
+const VehiclesPage = React.lazy(() => import('@/pages/vehicles/VehiclesPage'))
 const TripsPage = React.lazy(() => import('@/pages/trips/TripsPage'))
 const DriversPage = React.lazy(() => import('@/pages/drivers/DriversPage'))
 const AnalyticsPage = React.lazy(() => import('@/pages/analytics/AnalyticsPage'))
@@ -49,6 +50,14 @@ const router = createBrowserRouter([
         element: (
             <ProtectedRoute allowedRoles={['manager', 'safety']}>
                 <DriversPage />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: '/vehicles',
+        element: (
+            <ProtectedRoute allowedRoles={['manager', 'dispatcher', 'safety', 'finance']}>
+                <VehiclesPage />
             </ProtectedRoute>
         ),
     },

@@ -24,6 +24,7 @@ enum VehicleStatus {
   AVAILABLE
   ON_TRIP
   IN_SHOP
+  RETIRED
 }
 
 enum TripStatus {
@@ -73,6 +74,7 @@ model Vehicle {
   status       VehicleStatus @default(AVAILABLE)
   fuelLevel    Float?        @default(100)
   mileage      Int?          @default(0)
+  maxPayload   Float?        // Max capacity in tons
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   trips        Trip[]

@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes'
 import dashboardRoutes from './routes/dashboardRoutes'
 import aiInsightsRoutes from './routes/aiInsightsRoutes'
+import vehicleRoutes from './routes/vehicleRoutes'
 
 dotenv.config()
 
@@ -36,6 +37,9 @@ app.use('/api/dashboard', dashboardRoutes)
 // AI Insights — any authenticated user
 app.use('/api/ai-insights', aiInsightsRoutes)
 
+// Vehicles CRUD
+app.use('/api/vehicles', vehicleRoutes)
+
 // ─────────────────────────────────────────────────────────
 // START
 // ─────────────────────────────────────────────────────────
@@ -46,6 +50,8 @@ app.listen(PORT, () => {
     console.log(`   GET  /api/auth/me`)
     console.log(`   GET  /api/dashboard`)
     console.log(`   GET  /api/ai-insights`)
+    console.log(`   GET  /api/vehicles`)
+    console.log(`   POST /api/vehicles`)
 })
 
 export default app
