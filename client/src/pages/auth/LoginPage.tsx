@@ -5,12 +5,12 @@ import { authService } from '@/services/authService'
 import { useAuthStore } from '@/store/authStore'
 import type { UserRole } from '@/types/auth'
 
-/** Role → redirect path map */
+/** Role → redirect path map — all roles land on dashboard */
 const ROLE_ROUTES: Record<UserRole, string> = {
     manager: '/dashboard',
-    dispatcher: '/trips',
-    safety: '/drivers',
-    finance: '/analytics',
+    dispatcher: '/dashboard',
+    safety: '/dashboard',
+    finance: '/dashboard',
 }
 
 const ROLES: { label: string; value: UserRole }[] = [

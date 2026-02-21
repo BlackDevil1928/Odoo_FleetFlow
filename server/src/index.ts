@@ -3,8 +3,8 @@ import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes'
-import { requireAuth, requireRole } from './middleware/authMiddleware'
-import type { AuthenticatedRequest } from './middleware/authMiddleware'
+import dashboardRoutes from './routes/dashboardRoutes'
+import aiInsightsRoutes from './routes/aiInsightsRoutes'
 
 dotenv.config()
 
@@ -30,18 +30,11 @@ app.get('/api/health', (_req, res) => {
 // Auth routes (register, login, me) — public
 app.use('/api/auth', authRoutes)
 
-// Protected stubs — will be replaced by real routers per page
-app.get('/api/dashboard', requireAuth, requireRole('manager'),
-    (_req, res) => res.json({ message: 'Dashboard — manager only' }))
+// Dashboard — manager only
+app.use('/api/dashboard', dashboardRoutes)
 
-app.get('/api/trips', requireAuth, requireRole('manager', 'dispatcher'),
-    (_req, res) => res.json({ message: 'Trips data' }))
-
-app.get('/api/drivers', requireAuth, requireRole('manager', 'safety'),
-    (_req, res) => res.json({ message: 'Drivers data' }))
-
-app.get('/api/analytics', requireAuth, requireRole('manager', 'finance'),
-    (_req: AuthenticatedRequest, res) => res.json({ message: 'Analytics data' }))
+// AI Insights — any authenticated user
+app.use('/api/ai-insights', aiInsightsRoutes)
 
 // ─────────────────────────────────────────────────────────
 // START
@@ -51,6 +44,8 @@ app.listen(PORT, () => {
     console.log(`   POST /api/auth/register`)
     console.log(`   POST /api/auth/login`)
     console.log(`   GET  /api/auth/me`)
+    console.log(`   GET  /api/dashboard`)
+    console.log(`   GET  /api/ai-insights`)
 })
 
 export default app

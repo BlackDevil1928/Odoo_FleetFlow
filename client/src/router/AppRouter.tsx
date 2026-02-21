@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     {
         path: '/dashboard',
         element: (
-            <ProtectedRoute allowedRoles={['manager']}>
+            <ProtectedRoute allowedRoles={['manager', 'dispatcher', 'safety', 'finance']}>
                 <DashboardPage />
             </ProtectedRoute>
         ),
