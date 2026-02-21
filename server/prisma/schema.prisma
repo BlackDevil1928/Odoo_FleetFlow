@@ -78,6 +78,7 @@ model Vehicle {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   trips        Trip[]
+  serviceLogs  ServiceLog[]
 
   @@map("vehicles")
 }
@@ -101,4 +102,27 @@ model Trip {
   updatedAt          DateTime   @updatedAt
 
   @@map("trips")
+}
+
+enum ServiceLogStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+model ServiceLog {
+  id          String           @id @default(uuid())
+  logNumber   Int              @default(autoincrement())
+  vehicleId   String
+  vehicle     Vehicle          @relation(fields: [vehicleId], references: [id])
+  issue       String
+  cost        Float?
+  status      ServiceLogStatus @default(NEW)
+  serviceDate DateTime         @default(now())
+  resolvedAt  DateTime?
+  notes       String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("service_logs")
 }
