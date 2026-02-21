@@ -1,4 +1,4 @@
-## Project Development Guidelines for O2 Hackathon
+## Project Development Guidelines for Odoo Hackathon
 
 This document defines the standards, rules, and expectations that must be followed while designing, developing, and presenting this project.
 
@@ -204,5 +204,6 @@ This hackathon is about:
 - Strong fundamentals
 - Clean architecture
 - Real-world readiness
+
 
 Build thoughtfully. Avoid shortcuts. Think like engineers.
